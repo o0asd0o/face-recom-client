@@ -23,4 +23,13 @@ export const initializeFaceApiJS = async (faceApi: typeof faceApi2, videoRef: an
     }
 
     return Promise.resolve();
+};
+
+export const toTitleCase = (text: string) => {
+  return text.replace(
+    /\w\S*/g,
+    function(text) {
+      return text.charAt(0).toUpperCase() + text.substr(1).toLowerCase();
+    }
+  );
 }

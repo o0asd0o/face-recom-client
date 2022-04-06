@@ -33,7 +33,7 @@ const HeaderNav: React.FC = () => {
   const handleCloseUserMenu = (index?: number) => {
     setAnchorElUser(null);
     if (index !== undefined) {
-      handleNavigate("/dashboard", 3)
+      handleNavigate("/home/browse", 0)
     }
   };
 
@@ -50,7 +50,7 @@ const HeaderNav: React.FC = () => {
             variant="h6"
             noWrap
             component="div"
-            onClick={() => handleNavigate('/dashboard', 0)}
+            onClick={() => handleNavigate("/home/browse", 0)}
             sx={{ mr: 2, display: { xs: 'none', md: 'flex' }, cursor: "pointer"}}
           >
              Food&nbsp;<span style={{ color: "#81c784" }}>Findr</span>
@@ -104,7 +104,7 @@ const HeaderNav: React.FC = () => {
             variant="h6"
             noWrap
             component="div"
-            onClick={() => handleNavigate('/dashboard', 0)}
+            onClick={() => handleNavigate("/home/browse", 0)}
             sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' }, cursor: "pointer" }}
           >
             Food&nbsp;<span style={{ color: "#81c784" }}>Findr</span>

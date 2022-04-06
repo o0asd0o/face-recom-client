@@ -55,6 +55,7 @@ export type WebPage = {
   landingImage: File | null | string;
   facebookPage: string;
   contactNumber: string;
+  ownerEmail?: string;
 }
 
 export type Product = {
@@ -67,17 +68,17 @@ export type Product = {
   name: string;
   ownerEmail: string;
   price: number;
+  categories: string[];
 }
 
 export type CurrentUser = { 
     id: string;
-    avatarUrl: string,
     address: string,
     firstName: string,
     lastName: string,
     phoneNumber: string,
     email: string,
-    role: "owner" | "admin"
+    preferences: string[],
 }
 
 export type Customer = {
@@ -114,3 +115,5 @@ export type LandingResto = {
   featured: string;
   name: string;
 }
+
+export type Emotion = "sad" | "angry" | "surprised" | "happy";

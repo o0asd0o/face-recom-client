@@ -2,15 +2,12 @@ import React, { useState } from "react";
 import { useContext } from "react";
 import { createContext } from "react";
 import * as faceApi from "face-api.js";
-import {initializeFaceApiJS} from "utils/helpers";
+import {initializeFaceApiJS} from "_utils/helpers";
+import produce from "immer";
+import { Emotion } from "types";
 
-type Emotion = "sad" | "angry" | "surprise" | "happy" | "neutral";
-type Counts = {
-    sad: number;
-    happy: number;
-    anger: number;
-    surprised: number;
-};
+type Counts = Record<Emotion, number>;
+
 type FaceRecognitionContextType = {
     currentEmotion: Emotion;
     emotionCounts: Counts;
@@ -29,7 +26,7 @@ export function FaceRecognitionProvider({ children }: { children: JSX.Element })
     const [emotionCounts, setEmotionCounts] = useState<Counts>({
         sad: 0,
         happy: 0,
-        anger: 0,
+        angry: 0,
         surprised: 0
     });
 
@@ -41,7 +38,6 @@ export function FaceRecognitionProvider({ children }: { children: JSX.Element })
             const maxValue = Math.max(
                 expressions['happy'], 
                 expressions['sad'],
-                // expressions['neutral'],
                 expressions['surprised'],
                 expressions['angry'],
             )
@@ -51,13 +47,26 @@ export function FaceRecognitionProvider({ children }: { children: JSX.Element })
                 .filter(({ key }) => ['happy', 'sad', 'angry', 'surprised'].includes(key));
 
             const emotion = arrayEntries.find(({value}) => String(maxValue) === value) ?? {key: "none"};
+            const emotionKey = emotion.key as Emotion;
+            setEmotionCounts(produce((emotionCounts) => {
+                emotionCounts[emotionKey] += 1;
 
-            setCurrentEmotion(emotion.key as Emotion);
-        })
-    }, [setCurrentEmotion]);
+                const max = Math.max(
+                    emotionCounts['happy'], 
+                    emotionCounts['sad'],
+                    emotionCounts['surprised'],
+                    emotionCounts['angry'],
+                );
 
-    console.log({ currentEmotion });
+                const entries = Object.entries(emotionCounts);
+                const maxEmotion = entries.find(([, value]) => max === value);
 
+                if (maxEmotion && currentEmotion !== maxEmotion[0]) {
+                     setCurrentEmotion(maxEmotion[0] as Emotion);
+                }
+            }))
+        });
+    }, [setCurrentEmotion, currentEmotion]);
 
     React.useEffect(() => {
         let interval: any;
@@ -74,15 +83,14 @@ export function FaceRecognitionProvider({ children }: { children: JSX.Element })
                     if (canvasRef.current) {
                         const resizedDetections = faceApi.resizeResults(detections, displaySize);
                         // @ts-expect-error
-                        canvasRef.current.getContext('2d')
+                        canvasRef.current
+                            .getContext('2d')
                             .clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
         
                         faceApi.draw.drawDetections(canvasRef.current, resizedDetections)
-                        // faceApi.draw.drawFaceExpressions(canvasRef.current, resizedDetections)
-        
                         handleEmotionChange(detections);
                     }
-                }, 200)
+                }, 300)
             }
             
           })

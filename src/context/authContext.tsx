@@ -5,7 +5,7 @@ import { createContext } from "react";
 import { onAuthStateChanged } from "../providers/firebase";
 import { CurrentUser } from "types";
 import { getCurrentUser } from "providers/users";
-import { getCurrentCustomer } from "providers/customers";
+import { getCurrentCustomer, onCustomersSnapshot } from "providers/customers";
 
 type AuthContextType = {
   user: User | null | undefined,
@@ -28,21 +28,21 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
 
   useEffect(() => {
     if (!user?.email) return;
-    (async () => {
-      if (user.email)  {
-         const info = await getCurrentCustomer(user.email);
-         setUserInfo({
+    const unsub = onCustomersSnapshot((snapshot) => {
+      snapshot.forEach((info) => {
+        setUserInfo({
             id: info.id,
-            avatarUrl: info.data().avatarUrl,
             address: info.data().address,
             firstName: info.data().firstName,
             lastName: info.data().lastName,
             phoneNumber: info.data().phoneNumber,
             email: info.data().email,
-            role: info.data().role,
+            preferences: info.data().preferences || []
          });
-      }
-    })();
+      })
+    }, user.email);
+
+    return () => unsub();
   }, [user?.email])
 
   return (

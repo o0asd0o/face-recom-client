@@ -16,11 +16,11 @@ import {  validation } from "./helpers";
 import { addDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { customersCollection, registerWithEmailPassword, uploadUsersImage, usersCollection, webPagesCollection } from "providers/firebase";
-import { mapDefaultWebPageData } from "utils/mappers/webPageMappers";
+import { mapDefaultWebPageData } from "_utils/mappers/webPageMappers";
 import { CustomerData, UserData, WebPageData } from "types/server";
 import { Logo } from "pages/login/styled/StyledLoginPage";
-import { mapUserData } from "utils/mappers/userMappers";
-import { mapCustomerrData } from "utils/mappers/customerMapper";
+import { mapUserData } from "_utils/mappers/userMappers";
+import { mapCustomerrData } from "_utils/mappers/customerMapper";
 
 const initialValues: Customer = {
     firstName: "",

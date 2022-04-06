@@ -15,7 +15,6 @@ import PrivateRoute from "components/PrivateRoute";
 import 'react-toastify/dist/ReactToastify.css';
 import Home from "pages/home/Home";
 import RegisterPage from "pages/register/RegisterPage";
-import Dashboard from "pages/home/dashboard/Dashboard";
 import LandingPage from "pages/landing/LandingPage";
 import Public from "pages/Public";
 import BrowsePage from "pages/home/browse/BrowsePage";
