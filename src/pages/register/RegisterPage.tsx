@@ -21,6 +21,7 @@ import { CustomerData, UserData, WebPageData } from "types/server";
 import { Logo } from "pages/login/styled/StyledLoginPage";
 import { mapUserData } from "_utils/mappers/userMappers";
 import { mapCustomerrData } from "_utils/mappers/customerMapper";
+import { useNavigate } from "react-router-dom";
 
 const initialValues: Customer = {
     firstName: "",
@@ -31,41 +32,45 @@ const initialValues: Customer = {
     phoneNumber: "",
 }
 
-const handleSubmit = async ({ password, ...otherDetails}: Customer) => {
-    const registrationProcesses = async () => {
-        await registerWithEmailPassword(otherDetails.email, password)
-
-        const customerData: CustomerData = mapCustomerrData(otherDetails);
-
-        await addDoc(customersCollection, customerData);
-    };
-
-    return await toast.promise(registrationProcesses, {
-        pending: 'Customer registration in progress...',
-        success: 'Successfuly registered!',
-        error: {
-            render: (err) => {
-                const { data } = err;
-                const error = data as { code: string };
-                if (error.code === 'auth/email-already-in-use') {
-                    return 'That email address is already in use!';
-                } else if (error.code === 'auth/invalid-email') {
-                    return 'That email address is invalid!';
-                }
-
-                return JSON.stringify(error);
-            }
-        },
-    })
-}
-
 const RegisterPage: React.FC = () => {
+
+    const navigate = useNavigate();
+
+    const handleSubmit = async ({ password, ...otherDetails}: Customer) => {
+        const registrationProcesses = async () => {
+            await registerWithEmailPassword(otherDetails.email, password)
+
+            const customerData: CustomerData = mapCustomerrData(otherDetails);
+
+            await addDoc(customersCollection, customerData);
+        };
+
+        await toast.promise(registrationProcesses, {
+            pending: 'Customer registration in progress...',
+            success: 'Successfuly registered!',
+            error: {
+                render: (err) => {
+                    const { data } = err;
+                    const error = data as { code: string };
+                    if (error.code === 'auth/email-already-in-use') {
+                        return 'That email address is already in use!';
+                    } else if (error.code === 'auth/invalid-email') {
+                        return 'That email address is invalid!';
+                    }
+
+                    return JSON.stringify(error);
+                }
+            },
+        });
+
+        navigate('/home/preferences');
+    };
 
     const form = useFormik<Customer>({
         initialValues,
         validationSchema: validation,
         onSubmit: handleSubmit,
-    })
+    });
 
     return <ThemeProvider theme={theme}>
         <Container maxWidth="md" fixed sx={{ paddingBottom: "40px" }}>

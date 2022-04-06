@@ -3,7 +3,6 @@ import React, { useCallback, useEffect } from "react";
 import { useContext, useState } from "react";
 import { createContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "./authContext";
 
 type NavigationContextType = {
     selectedPage: string,
@@ -19,8 +18,6 @@ export function NavigationProvider({ children }: { children: JSX.Element }) {
     const [selectedPage, setSelectedPage] = useState<string>("/");
     const [selectedPageIndex, setSelectedPageIndex] = useState<number>(0);
     const [prevPageIndex, setPrevPageIndex] = useState<number>(0);
-
-    const { userInfo } = useAuth();
 
     const navigate = useNavigate();
     const location = useLocation();

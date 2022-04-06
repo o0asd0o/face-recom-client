@@ -123,4 +123,4 @@ const PreferencesPage: React.FC = () => {
     </Container>
 };
 
-export default PreferencesPage;
+export default React.memo(PreferencesPage);

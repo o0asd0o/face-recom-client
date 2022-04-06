@@ -35,11 +35,14 @@ const EmotionContainer = styled(Box)`
 `;
 
 const StoreHeader = styled("div")<{ theme?: string }>`
-    padding: 20px 10px;
+    padding: 20px;
     background: ${props => props.theme || "#81c784"}12;
     margin-bottom: 10px;
     border-radius: 8px;
     display: flex;
+    border: 1px solid #3333330f;
+    justify-content: center;
+    align-items: center;
 `;
 
 const RecommendHeader = styled("div")`
@@ -143,7 +146,8 @@ const MainPage: React.FC<Props> = ({ currentEmotion, preferences }) => {
                                 <Typography variant="h5" sx={{ fontFamily: "Rubik", textTransform: "uppercase", pt: 0.5 }}>
                                     {storeName || "Unnamed store"}
                                 </Typography>
-                                <Button variant="outlined" sx={{ ml: "auto" }}>View Store</Button>
+                                <Button variant="outlined" sx={{ ml: "auto", display: { xs: "none", sm: "block"} }}>View Store</Button>
+                                <Button variant="outlined" sx={{ ml: "auto", display: { xs: "block", sm: "none"} }}>View</Button>
                             </StoreHeader>
                             <Grid container spacing={{ xs: 3, sm: 5, md: 10 }} sx={{ mb: 3 }}>
                                 {scores.slice(0, 3).map((score) => {
