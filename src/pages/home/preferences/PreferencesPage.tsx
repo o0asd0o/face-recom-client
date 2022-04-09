@@ -91,6 +91,7 @@ const PreferencesPage: React.FC = () => {
             });
 
             requestUpdatePreferences(userInfo.id, preferences as string[], () => {
+                window.scrollTo({ top: 0 });
                 handleNavigation("/home/browse");
             });
         }

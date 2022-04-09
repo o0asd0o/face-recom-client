@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Box, Button, CircularProgress, Container, createTheme, Grid, Stack, Theme, ThemeProvider, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Container, createTheme, Grid, Stack, Theme, ThemeProvider, Tooltip, Typography } from "@mui/material";
 import { onProductsSnapshot } from "providers/products";
 import React, { useEffect, useMemo, useState } from "react";
 import { Product, WebPage } from "types";
@@ -10,6 +10,9 @@ import { Emotion } from "types";
 import { onWebPageSnapshot } from "providers/webPage";
 import RecipeReviewCard from "./ProductCard";
 import { getThemeFromColor } from "./helpers";
+import { Link } from "react-router-dom";
+import { toTitleCase } from "_utils/helpers";
+import CollapsibleProducts from "./CallapsibleProducts";
 
 type Props = {
     currentEmotion: Emotion;
@@ -32,9 +35,10 @@ const EmotionContainer = styled(Box)`
     justify-content: center;
     align-items: center;
     margin-left: auto;
+    position: relative;
 `;
 
-const StoreHeader = styled("div")<{ theme?: string }>`
+export const StoreHeader = styled("div")<{ theme?: string }>`
     padding: 20px;
     background: ${props => props.theme || "#81c784"}12;
     margin-bottom: 10px;
@@ -44,6 +48,18 @@ const StoreHeader = styled("div")<{ theme?: string }>`
     justify-content: center;
     align-items: center;
 `;
+
+const EmotionText = styled('p')`
+    position: absolute;
+    bottom: -33px;
+    right: 0px;
+    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: 700;
+    color: #b6b1b1;
+    width: 70px;
+    text-align: center;
+`
 
 const RecommendHeader = styled("div")`
     text-align: center;
@@ -130,7 +146,8 @@ const MainPage: React.FC<Props> = ({ currentEmotion, preferences }) => {
             </Header>
             <EmotionContainer>
                 <Typography sx={{mr: 1}}>You look: </Typography>
-                <img height="100%"src={`/images/emotions/${currentEmotion}.png`} />
+                <img height="100%" src={`/images/emotions/${currentEmotion}.png`} />
+                <EmotionText>{toTitleCase(currentEmotion)}</EmotionText>
             </EmotionContainer>
         </Stack>
         <Box sx={{ mt: 2 }}>
@@ -139,26 +156,13 @@ const MainPage: React.FC<Props> = ({ currentEmotion, preferences }) => {
                     <RecommendHeader>🌟 Here&apos;s our recommeded food for you! 🌟</RecommendHeader>
                     {Object.entries(data.similarDocsMapping).map(([storeEmail, scores]) => {
                         const webPage = webpages.find((web) => web.ownerEmail === storeEmail);
-                        const { storeName } = webPage || {};
                         const theme = themes[webPage?.id || ''];
                         return <ThemeProvider theme={theme} key={storeEmail}>
-                            <StoreHeader theme={"#adaab6"}>
-                                <Typography variant="h5" sx={{ fontFamily: "Rubik", textTransform: "uppercase", pt: 0.5 }}>
-                                    {storeName || "Unnamed store"}
-                                </Typography>
-                                <Button variant="outlined" sx={{ ml: "auto", display: { xs: "none", sm: "block"} }}>View Store</Button>
-                                <Button variant="outlined" sx={{ ml: "auto", display: { xs: "block", sm: "none"} }}>View</Button>
-                            </StoreHeader>
-                            <Grid container spacing={{ xs: 3, sm: 5, md: 10 }} sx={{ mb: 3 }}>
-                                {scores.slice(0, 3).map((score) => {
-                                    const product = products.find((item) => item.id === score.id);
-                                    return (
-                                        <Grid key={score.id} item xs={12} sm={6} md={4}>
-                                            <RecipeReviewCard product={product} webPage={webPage} score={score} />
-                                        </Grid>
-                                    );
-                                })}
-                            </Grid>
+                            <CollapsibleProducts
+                                webPage={webPage}
+                                products={products}
+                                scores={scores}
+                            />
                         </ThemeProvider>
                     })}
                 </>)}

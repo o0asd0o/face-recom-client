@@ -7,7 +7,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 type NavigationContextType = {
     selectedPage: string,
     selectedPageIndex: number,
-    prevPageIndex: number
+    prevPageIndex: number,
+    pathName: string;
     handleNavigation(page: string, index?: number): void,
     setPageIndexManual(index: number): void,
 } | undefined
@@ -18,6 +19,7 @@ export function NavigationProvider({ children }: { children: JSX.Element }) {
     const [selectedPage, setSelectedPage] = useState<string>("/");
     const [selectedPageIndex, setSelectedPageIndex] = useState<number>(0);
     const [prevPageIndex, setPrevPageIndex] = useState<number>(0);
+    const [pathName, setPathName] = useState<string>("");
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -26,7 +28,8 @@ export function NavigationProvider({ children }: { children: JSX.Element }) {
         setTimeout(() => {
             const pathName = location.pathname;
             const index = pages.findIndex((item) => item.page === pathName);
-            setSelectedPageIndex(index)
+            setSelectedPageIndex(index);
+            setPathName(pathName);
         }, 0);
 
     }, [location.pathname, pages])
@@ -40,7 +43,8 @@ export function NavigationProvider({ children }: { children: JSX.Element }) {
     }, [selectedPageIndex, setSelectedPage, setSelectedPageIndex, setPrevPageIndex]);
 
     return (
-        <NavigationContext.Provider value={{ 
+        <NavigationContext.Provider value={{
+            pathName,
             selectedPage,
             selectedPageIndex,
             prevPageIndex,

@@ -4,10 +4,8 @@ import {
   Routes,
   Route,
   Navigate,
-  Outlet,
 } from "react-router-dom";
 import LoginPage from "pages/login/LoginPage";
-// import RegisterPage from "pages/register/RegisterPage";
 import { ToastContainer } from "react-toastify";
 import PublicRoute from "components/PublicRoute";
 import PrivateRoute from "components/PrivateRoute";
@@ -19,6 +17,7 @@ import LandingPage from "pages/landing/LandingPage";
 import Public from "pages/Public";
 import BrowsePage from "pages/home/browse/BrowsePage";
 import PreferencesPage from "pages/home/preferences/PreferencesPage";
+import StorePage from "pages/home/store/StorePage";
 
 const App: React.FC = () => {
   return (
@@ -43,7 +42,7 @@ const App: React.FC = () => {
             <Route index element={<Navigate to="/home/browse" />} />
             <Route path="/home/browse" element={<BrowsePage />} />
             <Route path="/home/preferences" element={<PreferencesPage />} />
-            
+            <Route path="/home/browse/store" element={<StorePage /> } />
         </Route>
 
         <Route path="/" element={(

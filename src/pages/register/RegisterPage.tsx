@@ -3,23 +3,19 @@ import { ThemeProvider } from "@mui/system";
 import { useFormik } from "formik";
 
 import { theme } from "themes/themes";
-import { Container, Typography, Button } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 
-import { MainCard, Form, ImageBanner, Title1, Title2, BackdropRight, CardContainer,
-    Body, FieldsContainer, AvatarContainer, Footer, ReactLink, FooterLink, ErrorMessage, RegisterButton
+import { MainCard, Form, Title2, CardContainer,
+    Body, FieldsContainer, Footer, ReactLink, RegisterButton
 } from "./styled/StyledRegisterPage";
 
-import UploadImage from "components/UploadImage";
-import { Customer, RegistrationDetails } from "types";
+import { Customer } from "types";
 import MainFields from "./MainFields";
 import {  validation } from "./helpers";
 import { addDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
-import { customersCollection, registerWithEmailPassword, uploadUsersImage, usersCollection, webPagesCollection } from "providers/firebase";
-import { mapDefaultWebPageData } from "_utils/mappers/webPageMappers";
-import { CustomerData, UserData, WebPageData } from "types/server";
-import { Logo } from "pages/login/styled/StyledLoginPage";
-import { mapUserData } from "_utils/mappers/userMappers";
+import { customersCollection, registerWithEmailPassword } from "providers/firebase";
+import { CustomerData } from "types/server";
 import { mapCustomerrData } from "_utils/mappers/customerMapper";
 import { useNavigate } from "react-router-dom";
 

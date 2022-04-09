@@ -15,15 +15,13 @@ import { ListItemIcon } from '@mui/material';
 import { signOut } from 'providers/firebase';
 import { useHomeNavigation } from 'context/navigationContext';
 import { pages } from 'constants/constants';
-import { useAuth } from 'context/authContext';
 import { Logout } from '@mui/icons-material';
 
 const HeaderNav: React.FC = () => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
-  const { handleNavigation, selectedPageIndex } = useHomeNavigation();
-  const { userInfo } = useAuth();
+  const { handleNavigation, pathName, selectedPageIndex } = useHomeNavigation();
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => setAnchorElNav(event.currentTarget);
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => setAnchorElUser(event.currentTarget);
@@ -40,7 +38,9 @@ const HeaderNav: React.FC = () => {
   const handleNavigate = React.useCallback((page, index) => {
     setAnchorElNav(null);
     handleNavigation(page, index);
-  }, [handleNavigation])
+  }, [handleNavigation]);
+
+  if (pathName === "/home/browse/store") return null;
 
   return (
     <AppBar position="static" color="secondary">
