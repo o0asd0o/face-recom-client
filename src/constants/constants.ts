@@ -1,31 +1,35 @@
 export const pages = [
   {
-    title: 'Browse Foods',
-    page: '/home/browse',
+    title: "Home",
+    page: "/home",
   },
   {
-    title: 'Preferences',
-    page: '/home/preferences',
+    title: "Browse Foods",
+    page: "/home/browse",
+  },
+  {
+    title: "Preferences",
+    page: "/home/preferences",
   },
 ];
 
 export const landingPages = [
   {
-    title: 'Login',
-    page: '/login',
+    title: "Login",
+    page: "/login",
   },
   {
-    title: 'Register',
-    page: '/register',
+    title: "Register",
+    page: "/register",
   },
-   {
-    title: 'Foodies',
+  {
+    title: "Foodies",
     anchor: "#featured",
-    page:"/#featured",
+    page: "/#featured",
     isAnchor: true,
   },
   {
-    title: 'Home',
-    page: '/',
+    title: "Home",
+    page: "/",
   },
 ];

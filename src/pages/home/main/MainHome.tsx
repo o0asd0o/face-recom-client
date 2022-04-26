@@ -1,14 +1,15 @@
 import { Button, Container, Divider, Grid, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import { usePublicNavigation } from "context/publicNavigationContext";
+import { useHomeNavigation } from "context/navigationContext";
 import { onWebPageSnapshot } from "providers/webPage";
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { LandingResto } from "types";
 
-const LandingPage: React.FC = () => {
+const MainHome: React.FC = () => {
   const [restos, setRestos] = useState<LandingResto[]>([]);
 
-  const { handleNavigation } = usePublicNavigation();
+  const { handleNavigation } = useHomeNavigation();
 
   useEffect(() => {
     const unsub = onWebPageSnapshot((snapshot) => {
@@ -21,6 +22,7 @@ const LandingPage: React.FC = () => {
           contact: doc.data().contactNumber,
           featured: doc.data().featuredUrl,
           address: doc.data().address,
+          ownerEmail: doc.data().ownerEmail,
         });
       });
 
@@ -32,47 +34,6 @@ const LandingPage: React.FC = () => {
 
   return (
     <>
-      <Container maxWidth="xl" sx={{ display: "flex", pt: 10 }}>
-        <Box
-          sx={{
-            width: "50%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <img
-            src="/images/login-logo.png"
-            alt="Food Findr Logo"
-            style={{ width: "100%", maxWidth: "400px" }}
-          />
-        </Box>
-        <Box sx={{ width: "50%", display: "flex", justifyContent: "center" }}>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Typography variant="h4">Welcome Foodies!</Typography>
-            <Typography variant="h6" sx={{ my: 2 }}>
-              &quot;We&lsquo;re always in the mood for food&quot;
-            </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => handleNavigation("/login")}
-            >
-              Find Foodies
-            </Button>
-          </div>
-        </Box>
-      </Container>
-      <Container maxWidth="xl" sx={{ pt: 30 }}>
-        <Divider />
-      </Container>
       <Typography
         id="featured"
         variant="h4"
@@ -125,15 +86,17 @@ const LandingPage: React.FC = () => {
                 <Typography variant="h6" sx={{ pt: 2 }}>
                   Contact No.: {item.contact}
                 </Typography>
-                <div style={{ textAlign: "right" }}>
-                  <Button
-                    variant="contained"
-                    sx={{ mt: 2 }}
-                    onClick={() => handleNavigation("/login")}
-                  >
-                    Find Food
-                  </Button>
-                </div>
+                <Link
+                  to={`/home/browse/store`}
+                  state={{ ownerEmail: item.ownerEmail }}
+                  style={{ marginLeft: "auto", textDecoration: "none" }}
+                >
+                  <div style={{ textAlign: "right" }}>
+                    <Button variant="contained" sx={{ mt: 2 }}>
+                      View Store
+                    </Button>
+                  </div>
+                </Link>
               </Grid>
             </Grid>
           </Container>
@@ -143,4 +106,4 @@ const LandingPage: React.FC = () => {
   );
 };
 
-export default LandingPage;
+export default MainHome;

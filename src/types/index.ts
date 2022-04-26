@@ -18,10 +18,7 @@ export type RegistrationDetails = {
   status?: Status;
 };
 
-export type UserInformation = Omit<
-  RegistrationDetails,
-  'password'
->;
+export type UserInformation = Omit<RegistrationDetails, "password">;
 
 export type ProductInformation = {
   id?: string;
@@ -32,7 +29,7 @@ export type ProductInformation = {
   image: File | null | string;
   name: string;
   price: number;
-}
+};
 
 export type WebPageInformation = {
   id?: string;
@@ -44,7 +41,7 @@ export type WebPageInformation = {
   landingImage: File | null | string;
   facebookPage: string;
   contactNumber: string;
-}
+};
 
 export type WebPage = {
   id?: string;
@@ -56,7 +53,7 @@ export type WebPage = {
   facebookPage: string;
   contactNumber: string;
   ownerEmail?: string;
-}
+};
 
 export type Product = {
   id?: string;
@@ -69,17 +66,17 @@ export type Product = {
   ownerEmail: string;
   price: number;
   categories: string[];
-}
+};
 
-export type CurrentUser = { 
-    id: string;
-    address: string,
-    firstName: string,
-    lastName: string,
-    phoneNumber: string,
-    email: string,
-    preferences: string[],
-}
+export type CurrentUser = {
+  id: string;
+  address: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
+  preferences: string[];
+};
 
 export type Customer = {
   id?: string;
@@ -91,10 +88,7 @@ export type Customer = {
   password: string;
 };
 
-export type CustomerInformation = Omit<
-  Customer,
-  'password'
->;
+export type CustomerInformation = Omit<Customer, "password">;
 
 export type RestoOwner = {
   id: string;
@@ -105,7 +99,7 @@ export type RestoOwner = {
   avatarUrl: string;
   address: string;
   status?: string;
-}
+};
 
 export type LandingResto = {
   id: string;
@@ -114,6 +108,7 @@ export type LandingResto = {
   description: string;
   featured: string;
   name: string;
-}
+  ownerEmail?: string;
+};
 
 export type Emotion = "sad" | "angry" | "surprised" | "happy";
