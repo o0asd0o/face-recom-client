@@ -66,10 +66,16 @@ export function NavigationProvider({ children }: { children: JSX.Element }) {
   }, []);
 
   const handleTermsYes = useCallback(() => {
+    const { from } = (location.state as { from?: string }) || {};
     setAcceptedTerm(true);
     setTermModal(false);
+    if (from === "registration") {
+      setSelectedPageIndex(2);
+      return handleNavigation("/home/preferences");
+    }
+    setSelectedPageIndex(1);
     handleNavigation("/home/browse");
-  }, []);
+  }, [location.state]);
 
   return (
     <NavigationContext.Provider
