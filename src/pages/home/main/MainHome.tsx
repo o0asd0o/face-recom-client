@@ -1,18 +1,26 @@
 import { Button, Container, Divider, Grid, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useHomeNavigation } from "context/navigationContext";
+import { onRestoOwnersSnapshot } from "providers/restoOwners";
 import { onWebPageSnapshot } from "providers/webPage";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { LandingResto } from "types";
 
 const MainHome: React.FC = () => {
   const [restos, setRestos] = useState<LandingResto[]>([]);
-
-  const { handleNavigation } = useHomeNavigation();
+  const [approvedOwners, setApprovedOwners] = useState<string[]>([]);
 
   useEffect(() => {
-    const unsub = onWebPageSnapshot((snapshot) => {
+    const unsub0 = onRestoOwnersSnapshot((snapshot) => {
+      const owners: string[] = [];
+      snapshot.forEach((owner) => {
+        owners.push(owner.data().email);
+      });
+      setApprovedOwners(owners);
+    }, "approved");
+
+    const unsub1 = onWebPageSnapshot((snapshot) => {
       const resultRestos: LandingResto[] = [];
       snapshot.forEach((doc) => {
         resultRestos.push({
@@ -29,8 +37,20 @@ const MainHome: React.FC = () => {
       setRestos(resultRestos);
     });
 
-    return () => unsub();
+    return () => {
+      unsub0();
+      unsub1();
+    };
   }, []);
+
+  const restosToDisplay = useMemo(() => {
+    return restos.filter((item) => {
+      if (item.ownerEmail) {
+        return approvedOwners.includes(item.ownerEmail);
+      }
+      return false;
+    });
+  }, [restos, approvedOwners]);
 
   return (
     <>
@@ -47,7 +67,7 @@ const MainHome: React.FC = () => {
       >
         Our Featured Foodies
       </Typography>
-      {restos.map((item, index) => (
+      {restosToDisplay.map((item, index) => (
         <div
           key={item.id}
           style={{

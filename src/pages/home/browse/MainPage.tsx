@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { onProductsSnapshot } from "providers/products";
 import React, { useEffect, useMemo, useState } from "react";
-import { Product, WebPage } from "types";
+import { Product, RestoOwnerStatus, WebPage } from "types";
 import { Header } from "../common/styled";
 import { useQuery } from "react-query";
 import http from "_utils/http";
@@ -21,6 +21,7 @@ import { getThemeFromColor } from "./helpers";
 import { Link } from "react-router-dom";
 import { toTitleCase } from "_utils/helpers";
 import CollapsibleProducts from "./CallapsibleProducts";
+import { onRestoOwnersSnapshot } from "providers/restoOwners";
 
 type Props = {
   currentEmotion: Emotion;
@@ -80,8 +81,18 @@ const RecommendHeader = styled("div")`
 const MainPage: React.FC<Props> = ({ currentEmotion, preferences }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [webpages, setWebPages] = useState<WebPage[]>([]);
+  const [approvedOwners, setApprovedOwners] = useState<string[]>([]);
 
   useEffect(() => {
+    const unsub0 = onRestoOwnersSnapshot((snapshot) => {
+      const owners: string[] = [];
+      snapshot.forEach((owner) => {
+        owners.push(owner.data().email);
+        console.log(owner.data());
+      });
+      setApprovedOwners(owners);
+    }, "approved");
+
     const unsub1 = onProductsSnapshot((snapshot) => {
       const prods: Product[] = [];
       snapshot.forEach((product) => {
@@ -120,10 +131,26 @@ const MainPage: React.FC<Props> = ({ currentEmotion, preferences }) => {
     });
 
     return () => {
+      unsub0();
       unsub1();
       unsub2();
     };
   }, []);
+
+  const webPagesToDisplay = useMemo(() => {
+    return webpages.filter((item) => {
+      if (item.ownerEmail) {
+        return approvedOwners.includes(item.ownerEmail);
+      }
+      return false;
+    });
+  }, [webpages, approvedOwners]);
+
+  console.log({
+    webPagesToDisplay,
+    approvedOwners,
+    webpages,
+  });
 
   const { data, isLoading } = useQuery<Response, any>(
     ["productRecommendation", currentEmotion, preferences],
@@ -143,14 +170,14 @@ const MainPage: React.FC<Props> = ({ currentEmotion, preferences }) => {
   );
 
   const themes: Record<string, Theme> = useMemo(() => {
-    return webpages.reduce((accu, current) => {
+    return webPagesToDisplay.reduce((accu, current) => {
       if (!current.id) return accu;
       return {
         ...accu,
         [current.id]: getThemeFromColor(current.themeColor),
       };
     }, {});
-  }, [webpages]);
+  }, [webPagesToDisplay]);
 
   return (
     <Container maxWidth="xl">
@@ -173,9 +200,12 @@ const MainPage: React.FC<Props> = ({ currentEmotion, preferences }) => {
               </RecommendHeader>
               {Object.entries(data.similarDocsMapping).map(
                 ([storeEmail, scores]) => {
-                  const webPage = webpages.find(
+                  const webPage = webPagesToDisplay.find(
                     (web) => web.ownerEmail === storeEmail
                   );
+
+                  if (!webPage) return null;
+
                   const theme = themes[webPage?.id || ""];
                   return (
                     <ThemeProvider theme={theme} key={storeEmail}>

@@ -1,4 +1,13 @@
-import { doc, DocumentData, getFirestore, onSnapshot, query, QuerySnapshot, updateDoc, where } from "firebase/firestore";
+import {
+  doc,
+  DocumentData,
+  getFirestore,
+  onSnapshot,
+  query,
+  QuerySnapshot,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { webPagesCollection } from "providers/firebase";
 import { WebPageData } from "types/server";
 
@@ -6,22 +15,16 @@ const firestoreRef = getFirestore();
 
 export const onWebPageSnapshot = (
   observer: (snashot: QuerySnapshot<DocumentData>) => void,
-  ownerEmail?: string,
+  ownerEmail?: string
 ) => {
   let resQuery = query(webPagesCollection);
 
   if (ownerEmail) {
-    resQuery = query(webPagesCollection, where('ownerEmail', '==', ownerEmail));
+    resQuery = query(webPagesCollection, where("ownerEmail", "==", ownerEmail));
   }
 
-  return onSnapshot(resQuery, observer)
+  return onSnapshot(resQuery, observer);
 };
 
-export const updateWebPageDoc = async (
-  webPageId: string,
-  data: WebPageData
-) =>
-  await updateDoc(
-    doc(firestoreRef, 'webPages', webPageId),
-    data
-  );
+export const updateWebPageDoc = async (webPageId: string, data: WebPageData) =>
+  await updateDoc(doc(firestoreRef, "webPages", webPageId), data);

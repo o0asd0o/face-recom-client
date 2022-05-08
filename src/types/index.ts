@@ -112,3 +112,9 @@ export type LandingResto = {
 };
 
 export type Emotion = "sad" | "angry" | "surprised" | "happy";
+
+export type RestoOwnerStatus = {
+  id: string;
+  ownerEmail: string;
+  status: Status;
+};
