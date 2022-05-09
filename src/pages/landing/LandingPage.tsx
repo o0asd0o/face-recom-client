@@ -1,17 +1,27 @@
 import { Button, Container, Divider, Grid, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { usePublicNavigation } from "context/publicNavigationContext";
+import { onRestoOwnersSnapshot } from "providers/restoOwners";
 import { onWebPageSnapshot } from "providers/webPage";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { LandingResto } from "types";
 
 const LandingPage: React.FC = () => {
   const [restos, setRestos] = useState<LandingResto[]>([]);
+  const [approvedOwners, setApprovedOwners] = useState<string[]>([]);
 
   const { handleNavigation } = usePublicNavigation();
 
   useEffect(() => {
-    const unsub = onWebPageSnapshot((snapshot) => {
+    const unsub0 = onRestoOwnersSnapshot((snapshot) => {
+      const owners: string[] = [];
+      snapshot.forEach((owner) => {
+        owners.push(owner.data().email);
+      });
+      setApprovedOwners(owners);
+    }, "approved");
+
+    const unsub1 = onWebPageSnapshot((snapshot) => {
       const resultRestos: LandingResto[] = [];
       snapshot.forEach((doc) => {
         resultRestos.push({
@@ -21,14 +31,29 @@ const LandingPage: React.FC = () => {
           contact: doc.data().contactNumber,
           featured: doc.data().featuredUrl,
           address: doc.data().address,
+          ownerEmail: doc.data().ownerEmail,
         });
       });
 
       setRestos(resultRestos);
     });
 
-    return () => unsub();
+    return () => {
+      unsub0();
+      unsub1();
+    };
   }, []);
+
+  const restosToDisplay = useMemo(() => {
+    return restos.filter((item) => {
+      if (item.ownerEmail) {
+        return approvedOwners.includes(item.ownerEmail);
+      }
+      return false;
+    });
+  }, [restos, approvedOwners]);
+
+  console.log({ restos, approvedOwners, restosToDisplay });
 
   return (
     <>
@@ -86,7 +111,7 @@ const LandingPage: React.FC = () => {
       >
         Our Featured Foodies
       </Typography>
-      {restos.map((item, index) => (
+      {restosToDisplay.map((item, index) => (
         <div
           key={item.id}
           style={{
