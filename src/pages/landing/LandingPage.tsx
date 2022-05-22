@@ -53,8 +53,6 @@ const LandingPage: React.FC = () => {
     });
   }, [restos, approvedOwners]);
 
-  console.log({ restos, approvedOwners, restosToDisplay });
-
   return (
     <>
       <Container maxWidth="xl" sx={{ display: "flex", pt: 10 }}>

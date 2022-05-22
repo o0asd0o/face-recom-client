@@ -24,8 +24,6 @@ export type ProductInformation = {
   id?: string;
   sadFoodRating: number;
   happyFoodRating: number;
-  surpriseFoodRating: number;
-  angryFoodRating: number;
   image: File | null | string;
   name: string;
   price: number;
@@ -59,8 +57,6 @@ export type Product = {
   id?: string;
   sadFoodRating: number;
   happyFoodRating: number;
-  surpriseFoodRating: number;
-  angryFoodRating: number;
   imageUrl: string;
   name: string;
   ownerEmail: string;
@@ -111,7 +107,7 @@ export type LandingResto = {
   ownerEmail?: string;
 };
 
-export type Emotion = "sad" | "angry" | "surprised" | "happy";
+export type Emotion = "sad" | "happy";
 
 export type RestoOwnerStatus = {
   id: string;

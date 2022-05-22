@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { Score, StoreHeader } from "./MainPage";
 import RecipeReviewCard from "./ProductCard";
 import { Product, WebPage } from "types";
-import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 
 type Props = {
   scores: Score[];

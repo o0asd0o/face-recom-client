@@ -29,12 +29,14 @@ const NavigationContext = createContext<NavigationContextType>(undefined);
 
 export function NavigationProvider({ children }: { children: JSX.Element }) {
   const [selectedPage, setSelectedPage] = useState<string>("/");
-  const [acceptedTerm, setAcceptedTerm] = useState<boolean>(false);
   const [selectedPageIndex, setSelectedPageIndex] = useState<number>(0);
   const [prevPageIndex, setPrevPageIndex] = useState<number>(0);
   const [pathName, setPathName] = useState<string>("");
 
   const [termModal, setTermModal] = useState<boolean>(true);
+  const [acceptedTerm, setAcceptedTerm] = useState<boolean>(
+    !!JSON.parse(localStorage.getItem("acceptedTerm") || "0")
+  );
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -63,6 +65,7 @@ export function NavigationProvider({ children }: { children: JSX.Element }) {
     setAcceptedTerm(false);
     setTermModal(false);
     handleNavigation("/home");
+    localStorage.setItem("acceptedTerm", "0");
   }, []);
 
   const handleTermsYes = useCallback(() => {
@@ -75,6 +78,7 @@ export function NavigationProvider({ children }: { children: JSX.Element }) {
     }
     setSelectedPageIndex(1);
     handleNavigation("/home/browse");
+    localStorage.setItem("acceptedTerm", "1");
   }, [location.state]);
 
   return (
@@ -90,7 +94,7 @@ export function NavigationProvider({ children }: { children: JSX.Element }) {
         setPageIndexManual: setSelectedPageIndex,
       }}
     >
-      <Dialog open={termModal} onClose={noop} sx={{ p: 5 }}>
+      <Dialog open={termModal && !acceptedTerm} onClose={noop} sx={{ p: 5 }}>
         <DialogContent sx={{ p: 5 }}>
           <DialogContentText>
             We are about to get your facial expression for us to recommend you

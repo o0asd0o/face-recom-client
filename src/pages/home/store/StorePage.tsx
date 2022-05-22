@@ -53,8 +53,6 @@ const StorePage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [theme, setTheme] = useState<Theme>();
 
-  console.log({ state: location.state });
-
   useEffect(() => {
     window.scrollTo({ top: 0 });
   }, []);
@@ -85,8 +83,6 @@ const StorePage: React.FC = () => {
           id: product.id,
           sadFoodRating: product.data().sadFoodRating,
           happyFoodRating: product.data().happyFoodRating,
-          surpriseFoodRating: product.data().surpriseFoodRating,
-          angryFoodRating: product.data().angryFoodRating,
           imageUrl: product.data().imageUrl,
           name: product.data().name,
           ownerEmail: product.data().ownerEmail,

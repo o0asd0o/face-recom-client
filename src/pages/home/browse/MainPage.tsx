@@ -17,7 +17,7 @@ import http from "_utils/http";
 import { Emotion } from "types";
 import { onWebPageSnapshot } from "providers/webPage";
 import RecipeReviewCard from "./ProductCard";
-import { getThemeFromColor } from "./helpers";
+import { getEmotionLabelEquivalent, getThemeFromColor } from "./helpers";
 import { Link } from "react-router-dom";
 import { toTitleCase } from "_utils/helpers";
 import CollapsibleProducts from "./CallapsibleProducts";
@@ -26,6 +26,7 @@ import { onRestoOwnersSnapshot } from "providers/restoOwners";
 type Props = {
   currentEmotion: Emotion;
   preferences: string[];
+  calibrating: boolean;
 };
 
 export type Score = {
@@ -38,15 +39,6 @@ type Response = {
   similarDocsMapping: Record<string, Score[]>;
 };
 
-const EmotionContainer = styled(Box)`
-  height: 70px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-left: auto;
-  position: relative;
-`;
-
 export const StoreHeader = styled("div")<{ theme?: string }>`
   padding: 20px;
   background: ${(props) => props.theme || "#81c784"}12;
@@ -58,27 +50,19 @@ export const StoreHeader = styled("div")<{ theme?: string }>`
   align-items: center;
 `;
 
-const EmotionText = styled("p")`
-  position: absolute;
-  bottom: -33px;
-  right: 0px;
-  text-transform: uppercase;
-  font-size: 11px;
-  font-weight: 700;
-  color: #b6b1b1;
-  width: 70px;
-  text-align: center;
-`;
-
 const RecommendHeader = styled("div")`
   text-align: center;
   margin-bottom: 20px;
-  font-size: 37px;
+  font-size: 35px;
   font-family: "Rubik";
   margin-top: 20px;
 `;
 
-const MainPage: React.FC<Props> = ({ currentEmotion, preferences }) => {
+const MainPage: React.FC<Props> = ({
+  currentEmotion,
+  calibrating,
+  preferences,
+}) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [webpages, setWebPages] = useState<WebPage[]>([]);
   const [approvedOwners, setApprovedOwners] = useState<string[]>([]);
@@ -88,7 +72,6 @@ const MainPage: React.FC<Props> = ({ currentEmotion, preferences }) => {
       const owners: string[] = [];
       snapshot.forEach((owner) => {
         owners.push(owner.data().email);
-        console.log(owner.data());
       });
       setApprovedOwners(owners);
     }, "approved");
@@ -100,8 +83,6 @@ const MainPage: React.FC<Props> = ({ currentEmotion, preferences }) => {
           id: product.id,
           sadFoodRating: product.data().sadFoodRating,
           happyFoodRating: product.data().happyFoodRating,
-          surpriseFoodRating: product.data().surpriseFoodRating,
-          angryFoodRating: product.data().angryFoodRating,
           imageUrl: product.data().imageUrl,
           name: product.data().name,
           ownerEmail: product.data().ownerEmail,
@@ -146,12 +127,6 @@ const MainPage: React.FC<Props> = ({ currentEmotion, preferences }) => {
     });
   }, [webpages, approvedOwners]);
 
-  console.log({
-    webPagesToDisplay,
-    approvedOwners,
-    webpages,
-  });
-
   const { data, isLoading } = useQuery<Response, any>(
     ["productRecommendation", currentEmotion, preferences],
     async () => {
@@ -182,21 +157,16 @@ const MainPage: React.FC<Props> = ({ currentEmotion, preferences }) => {
   return (
     <Container maxWidth="xl">
       <Stack direction="row" alignItems="center" sx={{ marginTop: 1 }}>
-        <Header variant="h5">Browse Food!</Header>
-        <EmotionContainer>
-          <Typography sx={{ mr: 1, whitSpace: "nowrap" }}>
-            You look:{" "}
-          </Typography>
-          <img height="100%" src={`/images/emotions/${currentEmotion}.png`} />
-          <EmotionText>{toTitleCase(currentEmotion)}</EmotionText>
-        </EmotionContainer>
+        <Header variant="h5" sx={{ whiteSpaice: "nowrap", mr: 5 }}>
+          Browse Food!
+        </Header>
       </Stack>
       <Box sx={{ mt: 2 }}>
         <Stack>
-          {data && !isLoading && (
+          {data && !isLoading && !calibrating && (
             <>
               <RecommendHeader>
-                🌟 Here&apos;s our recommeded food for you! 🌟
+                🌟{getEmotionLabelEquivalent(currentEmotion)}🌟
               </RecommendHeader>
               {Object.entries(data.similarDocsMapping).map(
                 ([storeEmail, scores]) => {
@@ -220,7 +190,7 @@ const MainPage: React.FC<Props> = ({ currentEmotion, preferences }) => {
               )}
             </>
           )}
-          {!data && isLoading && (
+          {(calibrating || (!data && isLoading && !calibrating)) && (
             <Box
               height={500}
               sx={{
