@@ -25,26 +25,14 @@ const HeaderNav: React.FC = () => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-    null
-  );
   const [logoutDialog, setLogoutDialog] = React.useState<boolean>(false);
 
   const { handleNavigation, pathName, selectedPageIndex } = useHomeNavigation();
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) =>
     setAnchorElNav(event.currentTarget);
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) =>
-    setAnchorElUser(event.currentTarget);
 
   const handleCloseNavMenu = () => setAnchorElNav(null);
-
-  const handleCloseUserMenu = (index?: number) => {
-    setAnchorElUser(null);
-    if (index !== undefined) {
-      handleNavigate("/home/browse", 0);
-    }
-  };
 
   const handleNavigate = React.useCallback(
     (page, index) => {
@@ -53,6 +41,11 @@ const HeaderNav: React.FC = () => {
     },
     [handleNavigation]
   );
+
+  const handleLogout = () => {
+    localStorage.setItem("acceptedTerm", "0");
+    signOut();
+  };
 
   if (pathName === "/home/browse/store") return null;
 
@@ -69,7 +62,7 @@ const HeaderNav: React.FC = () => {
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
-          <Button onClick={() => signOut()}>Yes, log me out</Button>
+          <Button onClick={handleLogout}>Yes, log me out</Button>
           <Button variant="contained" onClick={() => setLogoutDialog(false)}>
             No
           </Button>

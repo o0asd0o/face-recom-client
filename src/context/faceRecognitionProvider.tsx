@@ -1,12 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { useStopwatch } from "react-timer-hook";
+import React, { useState } from "react";
 import { useContext } from "react";
 import { createContext } from "react";
 import * as faceApi from "face-api.js";
 import { initializeFaceApiJS } from "_utils/helpers";
 import produce from "immer";
 import { Emotion } from "types";
-import { fabClasses } from "@mui/material";
 
 type Counts = Record<Emotion, number>;
 
@@ -34,21 +32,10 @@ export function FaceRecognitionProvider({
 }) {
   const [calibrating, setCalibrating] = useState(true);
   const [currentEmotion, setCurrentEmotion] = useState<Emotion>("sad");
-  const [currentMaxEmotion, setCurrentMaxEmotion] = useState<Emotion>("sad");
   const [emotionCounts, setEmotionCounts] = useState<Counts>({
     sad: 0,
     happy: 0,
   });
-
-  const [prevMinutes, setPrevMinutes] = useState<number>();
-  const { start, minutes } = useStopwatch({ autoStart: false });
-
-  useEffect(() => {
-    if (minutes !== prevMinutes) {
-      setCurrentEmotion(currentMaxEmotion);
-      setPrevMinutes(minutes);
-    }
-  }, [minutes, prevMinutes, currentMaxEmotion]);
 
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
@@ -76,29 +63,17 @@ export function FaceRecognitionProvider({
             const maxEmotion = entries.find(([, value]) => max === value);
 
             if (maxEmotion && currentEmotion !== maxEmotion[0]) {
-              setCurrentMaxEmotion(maxEmotion[0] as Emotion);
+              setCurrentEmotion(maxEmotion[0] as Emotion);
             }
           })
         );
       });
     },
-    [setCurrentMaxEmotion, currentEmotion]
+    [setCurrentEmotion, currentEmotion]
   );
 
-  // const handleMaxEmotionChange = useCallback(() => {
-  //   setCurrentEmotion(currentMaxEmotion);
-  // }, [currentMaxEmotion]);
-
-  useEffect(() => {
-    if (!calibrating) {
-      start();
-    }
-  }, [calibrating]);
-
   React.useEffect(() => {
-    const x = setTimeout(() => {
-      setCalibrating(false);
-    }, 5000);
+    const x = setTimeout(() => setCalibrating(false), 8000);
     return () => clearTimeout(x);
   }, []);
 
